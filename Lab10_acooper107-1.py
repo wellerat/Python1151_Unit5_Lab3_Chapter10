@@ -19,7 +19,6 @@ import string
 class WordAnalyzer():
     def __init__(self, filepath):
         self.__path = Path(filepath)
-
         self.__word_freq = {}
 
     def process_file(self):
@@ -28,7 +27,8 @@ class WordAnalyzer():
             return
         
         try:
-            delete_punctuation = str.maketrans("","",string.punctuation)
+            extra_punctuation = "—–“”‘’…"
+            delete_punctuation = str.maketrans("","",string.punctuation +extra_punctuation)
 
             with self.__path.open(encoding="utf-8") as file:
                 for line in file:
@@ -36,12 +36,14 @@ class WordAnalyzer():
                     words = clean_line.split()
 
                     for w in words:
+                        if not w:
+                            continue
                         self.__word_freq[w] = self.__word_freq.get(w, 0) +1
 
             return True
                 
         except FileNotFoundError:
-            print("Error: File not found.")
+            print("\nError: File not found.")
             return False
         except Exception as e:
             print(f"Unexpected error: {e}")
@@ -49,9 +51,16 @@ class WordAnalyzer():
 
 
     def print_report(self):
-        pass
+        
+        if not self.__word_freq:
+            print("No words were processed.")
+            return
 
+        print("\n------Word Frequency Report-----")
 
+        for word in sorted(self.__word_freq.keys()):
+            count = self.__word_freq[word]
+            print(f"{word}:{count}")
 
 
 def main():
@@ -77,6 +86,7 @@ def main():
         option = input("Enter your choice (1-5):  ")
 
         if option =="5":
+            print("\n\nGoodbye!")
             program_end = True
             continue
         
