@@ -14,6 +14,7 @@ Date:
 """
 
 from pathlib import Path
+import string
 
 class WordAnalyzer():
     def __init__(self, filepath):
@@ -27,13 +28,24 @@ class WordAnalyzer():
             return
         
         try:
-            text = self.__path.read_text(encoding="utf-8")
+            delete_punctuation = str.maketrans("","",string.punctuation)
+
+            with self.__path.open(encoding="utf-8") as file:
+                for line in file:
+                    clean_line = line.lower().translate(delete_punctuation)
+                    words = clean_line.split()
+
+                    for w in words:
+                        self.__word_freq[w] = self.__word_freq.get(w, 0) +1
+
+            return True
+                
         except FileNotFoundError:
             print("Error: File not found.")
-            return
+            return False
         except Exception as e:
             print(f"Unexpected error: {e}")
-            return
+            return False
 
 
     def print_report(self):
@@ -75,4 +87,8 @@ def main():
         filepath = file_paths[option]
 
         analyzer = WordAnalyzer(filepath)
+
+        if analyzer.process_file():
+            analyzer.print_report()
+    
 main()    
