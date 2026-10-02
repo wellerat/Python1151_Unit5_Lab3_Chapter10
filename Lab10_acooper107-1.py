@@ -2,12 +2,16 @@
 Program Name:  Word Count
 
 Purpose of program:
+        This program displays the word count of all the words in a given
+        text file called by the user.  The text file has to be a predefined 
+        in the program. The terminal output lists the words in alphabetical
+        order.
 
 Author:
     Ann Cooper
 
 Starter Code:
-    No Started code, but the lab has 4 text files to query
+    No Starter code, but the lab has 4 text files to query
 
 Date:
     Oct. 1, 2026
@@ -17,14 +21,22 @@ from pathlib import Path
 import string
 
 class WordAnalyzer():
-    def __init__(self, filepath):
-        self.__path = Path(filepath)
-        self.__word_freq = {}
+    """ A class that analyzes a text file and counts the frequency of each word"""
+    
+    def __init__(self, filepath: str | Path ) -> None:
+        """ Initialization of the WordAnalyzer"""
 
-    def process_file(self):
+        self.__path: Path = Path(filepath)
+        self.__word_freq: dict[str, int] = {}
+
+    def process_file(self) -> bool:
+        """Method to process the file by taking out all of the punctuation,convert
+           to lower case, splitting lines into words, counting the frequency of each word
+           """
+        
         if not self.__path.exists():
             print("Error: File not found.")
-            return
+            return False
         
         try:
             extra_punctuation = "—–“”‘’…"
@@ -36,8 +48,6 @@ class WordAnalyzer():
                     words = clean_line.split()
 
                     for w in words:
-                        if not w:
-                            continue
                         self.__word_freq[w] = self.__word_freq.get(w, 0) +1
 
             return True
@@ -50,8 +60,9 @@ class WordAnalyzer():
             return False
 
 
-    def print_report(self):
-        
+    def print_report(self) -> None:
+        """ Prints the report of all words and frequency of each word alphabetically"""
+
         if not self.__word_freq:
             print("No words were processed.")
             return
@@ -63,9 +74,11 @@ class WordAnalyzer():
             print(f"{word}:{count}")
 
 
-def main():
-
-    file_paths = {
+def main() -> None:
+    """ The main function which displays the menu, allows the user to respond,
+        and coordinates the file processing and reporting."""
+    
+    file_paths: dict[str, Path] = {
         "1": Path("princess_mars.txt"),
         "2": Path("Tarzan.txt"),
         "3": Path("treasure_island.txt"),
